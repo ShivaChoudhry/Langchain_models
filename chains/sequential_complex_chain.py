@@ -1,9 +1,9 @@
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_ollama import ChatOllama
 from dotenv import load_dotenv
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
-load_dotenv("chains/.env")
+
 
 prompt1=PromptTemplate(
     template="Generate a detailed report on {topic}",
@@ -15,9 +15,10 @@ prompt2=PromptTemplate(
     input_variables=["report"]
 )
 
-model = ChatGoogleGenerativeAI(
-    model="gemini-3.8-flash"
+model = ChatOllama(
+    model="llama3.2:1b"
 )
+
 parser = StrOutputParser()
 
 chain = prompt1 | model | parser | prompt2 | model | parser

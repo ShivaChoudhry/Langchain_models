@@ -1,15 +1,26 @@
-from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
-
+from langchain_google_genai import ChatGoogleGenerativeAI
 from dotenv import load_dotenv
+from langchain_core.prompts import PromptTemplate
+from langchain_core.output_parsers import StrOutputParser
 
-load_dotenv()
+load_dotenv("2.ChatModels/.env")
 
-llm = HuggingFaceEndpoint(
-    repo_id="TinyLlama/TinyLlama-1.1B-Chat-v1.0",
-    task="text-generation",
-    provider="featherless-ai",
+prompt = PromptTemplate(
+    template="Generate 5 interesting facts about {topic}",
+    input_variables=["topic"]
 )
-model = ChatHuggingFace(llm=llm)
 
-result = model.invoke("What is the capital of India?")
-print(result.content)
+model = ChatGoogleGenerativeAI(
+    model="gemini-3.8-flash",
+    temperature=0.7
+)
+
+parser = StrOutputParser()
+
+chain = prompt | model | parser
+
+result = chain.invoke({"topic": "Lionel Messi"})
+
+print(result)
+
+chain.get_graph().print_ascii();
